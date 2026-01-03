@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Response, Request } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import {
   setAvailability,
@@ -11,7 +11,7 @@ const router: Router = Router();
 
 router.get(
   '/:year/:month',
-  async (req: AuthRequest, res: Response): Promise<void> => {
+  async (req: Request<{ year: string; month: string }>, res: Response): Promise<void> => {
     try {
       const year = parseInt(req.params.year, 10);
       const month = parseInt(req.params.month, 10);
@@ -32,8 +32,7 @@ router.get(
 
 router.get(
   '/:date',
-  authMiddleware,
-  async (req: AuthRequest, res: Response): Promise<void> => {
+  async (req: Request<{ date: string }>, res: Response): Promise<void> => {
     try {
       const { date } = req.params;
       const availability = await getAvailabilityByDate(date);

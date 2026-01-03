@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { availabilityService } from '../services/api';
 import { Calendar } from '../components/Calendar';
@@ -10,38 +11,46 @@ type StatusType = 'available' | 'unavailable' | 'partial';
 interface DayModalData {
   date: string;
   status: StatusType;
-  note: string;
-  existingNote: string | null;
+  fromTime: string;
+  toTime: string;
+}
+
+interface SelectedDayInfo {
+  date: string;
+  status: StatusType | null;
+  note: string | null;
 }
 
 export function CalendarPage() {
-  const { user, logout, token } = useAuth();
+  const { user, token, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [availability, setAvailability] = useState<Availability[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<SelectedDayInfo | null>(null);
   const [modalData, setModalData] = useState<DayModalData>({
     date: '',
     status: 'available',
-    note: '',
-    existingNote: null,
+    fromTime: '00:00',
+    toTime: '23:59',
   });
-  const [isSaving, setIsSaving] = useState(false);
+
+  const isOwner = user?.role === 'owner' && isAuthenticated;
 
   const fetchAvailability = useCallback(async () => {
-    if (!token) return;
     try {
       setIsLoading(true);
       const response = await availabilityService.getMonthly(
         currentDate.getFullYear(),
         currentDate.getMonth() + 1,
-        token
+        token || undefined
       );
       setAvailability(response.availability);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load availability');
+      setError('Erreur lors du chargement');
     } finally {
       setIsLoading(false);
     }
@@ -53,11 +62,49 @@ export function CalendarPage() {
 
   const handleDayClick = (date: string): void => {
     const existing = availability.find((a) => a.date === date);
+    console.log('=== DAY CLICK DEBUG ===');
+    console.log('Date clicked:', date);
+    console.log('Is owner:', isOwner);
+    console.log('Existing entry:', existing);
+    console.log('Existing note:', existing?.note);
+    console.log('Existing status:', existing?.status);
+
+    if (!isOwner) {
+      setSelectedDay({
+        date,
+        status: existing?.status || null,
+        note: existing?.note || null,
+      });
+      return;
+    }
+
+    let fromTime = '00:00';
+    let toTime = '23:59';
+
+    if (existing?.note) {
+      console.log('Parsing note...');
+      const match1 = existing.note.match(/(\d{1,2}:\d{2})\s+to\s+(\d{1,2}:\d{2})/);
+      const match2 = existing.note.match(/(\d{1,2}:\d{2})\s*à\s*(\d{1,2}:\d{2})/i);
+      const match = match1 || match2;
+      console.log('Match1 (English):', match1);
+      console.log('Match2 (French):', match2);
+      console.log('Final match:', match);
+      if (match) {
+        fromTime = match[1];
+        toTime = match[2];
+        console.log('SUCCESS: Parsed times:', fromTime, 'to', toTime);
+      } else {
+        console.log('FAILURE: Could not parse times from note');
+      }
+    } else {
+      console.log('No note found, using defaults');
+    }
+
     setModalData({
       date,
-      status: existing?.status || 'available',
-      note: existing?.note || '',
-      existingNote: existing?.note || null,
+      status: (existing?.status as StatusType) || 'available',
+      fromTime,
+      toTime,
     });
     setModalOpen(true);
     setError('');
@@ -67,51 +114,87 @@ export function CalendarPage() {
   const handleSave = async (): Promise<void> => {
     if (!token) return;
     try {
-      setIsSaving(true);
+      let note: string | undefined;
+      if (modalData.status === 'partial') {
+        note = `Disponible de ${modalData.fromTime} à ${modalData.toTime}`;
+      }
+
       await availabilityService.create(
         modalData.date,
         modalData.status,
-        modalData.note || undefined,
+        note,
         token
       );
-      setSuccess('Availability updated successfully');
+      setSuccess('Mis à jour');
       setModalOpen(false);
       fetchAvailability();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save availability');
-    } finally {
-      setIsSaving(false);
+      setError('Erreur lors de l\'enregistrement');
     }
   };
 
-  const handleDelete = async (): Promise<void> => {
-    if (!token) return;
-    try {
-      setIsSaving(true);
-      await availabilityService.delete(modalData.date, token);
-      setSuccess('Availability deleted');
-      setModalOpen(false);
-      fetchAvailability();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete availability');
-    } finally {
-      setIsSaving(false);
-    }
+  const handleLogin = (): void => {
+    navigate('/login');
   };
 
   const handleLogout = (): void => {
     logout();
+    setSelectedDay(null);
+  };
+
+  const formatDate = (dateStr: string): string => {
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).toUpperCase();
+  };
+
+  const formatNote = (note: string | null): string | null => {
+    if (!note) return null;
+    return note
+      .replace('Available from', 'DISPONIBLE DE')
+      .replace(' to', ' À')
+      .toUpperCase();
+  };
+
+  const getStatusLabel = (status: string | null): string => {
+    if (!status) return 'INDISPONIBLE';
+    switch (status) {
+      case 'available':
+        return 'DISPONIBLE';
+      case 'unavailable':
+        return 'INDISPONIBLE';
+      case 'partial':
+        return 'PARTIELLEMENT DISPONIBLE';
+      default:
+        return status.toUpperCase();
+    }
+  };
+
+  const getStatusClass = (status: string | null): string => {
+    if (!status) return 'status-undefined';
+    return `status-${status}`;
   };
 
   return (
     <div className="container">
       <div className="header">
-        <h1>Parking Availability</h1>
+        <h1>Parking</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span>Welcome, {user?.username}</span>
-          <button className="btn btn-secondary" onClick={handleLogout}>
-            Sign Out
-          </button>
+          {isAuthenticated ? (
+            <>
+              <span className="user-greeting">{user?.username.toUpperCase()}</span>
+              <button className="btn btn-secondary" onClick={handleLogout}>
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <button className="btn btn-primary" onClick={handleLogin}>
+              Connexion
+            </button>
+          )}
         </div>
       </div>
 
@@ -119,74 +202,98 @@ export function CalendarPage() {
       {success && <div className="success-message">{success}</div>}
 
       {isLoading ? (
-        <div className="loading">Loading...</div>
+        <div className="loading">CHARGEMENT</div>
       ) : (
         <Calendar
           availability={availability}
           onDayClick={handleDayClick}
           currentDate={currentDate}
           onMonthChange={setCurrentDate}
+          selectedDate={isOwner ? modalData.date : selectedDay?.date}
         />
+      )}
+
+      {selectedDay && (
+        <div className="day-details-panel">
+          <div className="day-details-header">
+            <h3>{formatDate(selectedDay.date)}</h3>
+            <button
+              className="close-details-btn"
+              onClick={() => setSelectedDay(null)}
+            >
+              ×
+            </button>
+          </div>
+          <div className={`day-details-status ${getStatusClass(selectedDay.status)}`}>
+            <span className="status-label">{getStatusLabel(selectedDay.status)}</span>
+            {selectedDay.status === 'partial' && selectedDay.note && (
+              <span className="status-time">{formatNote(selectedDay.note)}</span>
+            )}
+          </div>
+        </div>
       )}
 
       {modalOpen && (
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ marginBottom: '16px' }}>Update Availability</h2>
-            <p style={{ marginBottom: '16px', color: '#666' }}>
-              {new Date(modalData.date).toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+            <h2 className="modal-title">Modifier</h2>
+            <p className="modal-date">
+              {formatDate(modalData.date)}
             </p>
-            <div className="form-group">
-              <label>Status</label>
-              <select
-                value={modalData.status}
-                onChange={(e) =>
-                  setModalData({ ...modalData, status: e.target.value as StatusType })
-                }
+            <p style={{fontSize: '12px', color: '#666', margin: '4px 0'}}>
+              DEBUG: from={modalData.fromTime} to={modalData.toTime}
+            </p>
+
+            <div className="status-buttons">
+              <button
+                className={`status-btn available ${modalData.status === 'available' ? 'active' : ''}`}
+                onClick={() => setModalData({ ...modalData, status: 'available' })}
               >
-                <option value="available">Available</option>
-                <option value="unavailable">Unavailable</option>
-                <option value="partial">Partial</option>
-              </select>
+                Disponible
+              </button>
+              <button
+                className={`status-btn partial ${modalData.status === 'partial' ? 'active' : ''}`}
+                onClick={() => setModalData({ ...modalData, status: 'partial' })}
+              >
+                Partiel
+              </button>
+              <button
+                className={`status-btn unavailable ${modalData.status === 'unavailable' ? 'active' : ''}`}
+                onClick={() => setModalData({ ...modalData, status: 'unavailable' })}
+              >
+                Indisponible
+              </button>
             </div>
-            <div className="form-group">
-              <label>Note (optional)</label>
-              <textarea
-                value={modalData.note}
-                onChange={(e) => setModalData({ ...modalData, note: e.target.value })}
-                placeholder="e.g., Available from 1 PM"
-                rows={3}
+
+            <div className={`time-selector ${modalData.status !== 'partial' ? 'disabled' : ''}`}>
+              <label>DE</label>
+              <input
+                type="time"
+                value={modalData.fromTime}
+                onChange={(e) => setModalData({ ...modalData, fromTime: e.target.value })}
+                disabled={modalData.status !== 'partial'}
+              />
+              <span>À</span>
+              <input
+                type="time"
+                value={modalData.toTime}
+                onChange={(e) => setModalData({ ...modalData, toTime: e.target.value })}
+                disabled={modalData.status !== 'partial'}
               />
             </div>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+
+            <div className="modal-actions">
               <button
-                className="btn btn-primary"
+                className="btn save-btn"
                 onClick={handleSave}
-                disabled={isSaving}
-                style={{ flex: 1 }}
               >
-                {isSaving ? 'Saving...' : 'Save'}
+                Enregistrer
               </button>
-              {modalData.existingNote && (
-                <button
-                  className="btn btn-danger"
-                  onClick={handleDelete}
-                  disabled={isSaving}
-                >
-                  Delete
-                </button>
-              )}
               <button
                 className="btn btn-secondary"
                 onClick={() => setModalOpen(false)}
-                disabled={isSaving}
               >
-                Cancel
+                Annuler
               </button>
             </div>
           </div>

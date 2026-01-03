@@ -26,6 +26,23 @@ async function fetchWithAuth<T>(
   return response.json();
 }
 
+async function fetchPublic<T>(url: string, options: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${API_BASE}${url}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'An error occurred' }));
+    throw new Error(error.error || 'An error occurred');
+  }
+
+  return response.json();
+}
+
 export const authService = {
   login: (credentials: LoginCredentials): Promise<AuthResponse> => {
     return fetchWithAuth<AuthResponse>('/auth/login', {
@@ -43,12 +60,18 @@ export const authService = {
 };
 
 export const availabilityService = {
-  getMonthly: (year: number, month: number, token: string): Promise<{ availability: Availability[] }> => {
-    return fetchWithAuth(`/availability/${year}/${month}`, {}, token);
+  getMonthly: (year: number, month: number, token?: string): Promise<{ availability: Availability[] }> => {
+    if (token) {
+      return fetchWithAuth(`/availability/${year}/${month}`, {}, token);
+    }
+    return fetchPublic(`/availability/${year}/${month}`);
   },
 
-  getByDate: (date: string, token: string): Promise<{ availability: Availability }> => {
-    return fetchWithAuth(`/availability/${date}`, {}, token);
+  getByDate: (date: string, token?: string): Promise<{ availability: Availability }> => {
+    if (token) {
+      return fetchWithAuth(`/availability/${date}`, {}, token);
+    }
+    return fetchPublic(`/availability/${date}`);
   },
 
   create: (

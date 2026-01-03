@@ -158,7 +158,11 @@ There's no direct password update endpoint. To change a password:
 Access the SQLite database directly:
 
 ```bash
-# Connect to the database
+# Method 1: Using docker exec with query (no sqlite3 needed)
+docker exec parking-available-backend-1 sh -c "cat /app/data/parking.db" > parking.db
+
+# Method 2: Install sqlite3 temporarily
+docker exec -it parking-available-backend-1 apk add sqlite3 --no-cache
 docker exec -it parking-available-backend-1 sqlite3 /app/data/parking.db
 
 # In SQLite, update the role:
@@ -169,16 +173,29 @@ SELECT * FROM users;
 
 # Exit SQLite
 .quit
+
+# Optional: Remove sqlite3 from container
+docker exec parking-available-backend-1 apk del sqlite3
+```
+
+**Or query directly via docker exec without sqlite3:**
+```bash
+# View all users
+docker exec parking-available-backend-1 cat /app/data/parking.db | sqlite3 "SELECT id, username, role FROM users;"
+
+# Update user role
+docker exec parking-available-backend-1 cat /app/data/parking.db | sqlite3 "UPDATE users SET role='owner' WHERE username='jade';"
 ```
 
 ### Removing Users
 
-#### Delete User via API
+#### Delete User via Database
 
 The API doesn't have a delete user endpoint. Use the database:
 
 ```bash
-# Connect to the database
+# Method 1: Install sqlite3 temporarily in container
+docker exec parking-available-backend-1 apk add sqlite3 --no-cache
 docker exec -it parking-available-backend-1 sqlite3 /app/data/parking.db
 
 # Delete a user:
@@ -188,16 +205,32 @@ DELETE FROM users WHERE username = 'username';
 SELECT * FROM users;
 
 .quit
+
+# Optional: Remove sqlite3
+docker exec parking-available-backend-1 apk del sqlite3
+```
+
+**Or query directly via docker exec:**
+```bash
+docker exec parking-available-backend-1 cat /app/data/parking.db | sqlite3 "DELETE FROM users WHERE username = 'bob';"
+docker exec parking-available-backend-1 cat /app/data/parking.db | sqlite3 "SELECT * FROM users;"
 ```
 
 Example:
 ```bash
+# Install sqlite3
+docker exec parking-available-backend-1 apk add sqlite3 --no-cache
+
+# Connect and delete
 docker exec -it parking-available-backend-1 sqlite3 /app/data/parking.db
 SQLite version 3.40.1 2022-12-28 14:45:22
 Enter ".help" for instructions
 sqlite> DELETE FROM users WHERE username = 'bob';
 sqlite> SELECT * FROM users;
 sqlite> .quit
+
+# Clean up
+docker exec parking-available-backend-1 apk del sqlite3
 ```
 
 ### Listing All Users

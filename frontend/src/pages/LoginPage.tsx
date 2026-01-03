@@ -18,8 +18,8 @@ export function LoginPage() {
     try {
       await login(username, password);
       navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+    } catch {
+      setError('Identifiants incorrects');
     } finally {
       setIsLoading(false);
     }
@@ -29,11 +29,21 @@ export function LoginPage() {
     <div className="container">
       <div style={{ maxWidth: '400px', margin: '60px auto' }}>
         <div className="card">
-          <h1 style={{ fontSize: '24px', marginBottom: '24px', textAlign: 'center' }}>Sign In</h1>
+          <h1 style={{
+            fontSize: '32px',
+            fontFamily: 'var(--font-display)',
+            fontWeight: '700',
+            textTransform: 'uppercase',
+            marginBottom: 'var(--spacing-xl)',
+            textAlign: 'center',
+            letterSpacing: '-1px'
+          }}>
+            Connexion
+          </h1>
           {error && <div className="error-message">{error}</div>}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="username">Username</label>
+              <label htmlFor="username">Nom d&apos;utilisateur</label>
               <input
                 type="text"
                 id="username"
@@ -41,10 +51,11 @@ export function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={isLoading}
+                placeholder="ENTREZ VOTRE NOM"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mot de passe</label>
               <input
                 type="password"
                 id="password"
@@ -52,15 +63,16 @@ export function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                placeholder="ENTREZ VOTRE MOT DE PASSE"
               />
             </div>
             <button
               type="submit"
               className="btn btn-primary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', padding: '16px' }}
               disabled={isLoading}
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? 'Connexion...' : 'Se connecter'}
             </button>
           </form>
         </div>

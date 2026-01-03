@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { login, AuthRequest } from '../middleware/auth';
+import { login, AuthRequest, hashPassword } from '../middleware/auth';
 import { createUser, getUserByUsername } from '../models/database';
 
 const router: Router = Router();
@@ -47,7 +47,8 @@ router.post(
         return;
       }
 
-      const user = await createUser(username, password, role || 'owner');
+      const hashedPassword = await hashPassword(password);
+      const user = await createUser(username, hashedPassword, role || 'owner');
       res.status(201).json({
         user: { id: user.id, username: user.username, role: user.role },
       });

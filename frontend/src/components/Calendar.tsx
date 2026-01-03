@@ -7,9 +7,10 @@ interface CalendarProps {
   onDayClick: (date: string) => void;
   currentDate: Date;
   onMonthChange: (date: Date) => void;
+  selectedDate?: string | null;
 }
 
-export function Calendar({ availability, onDayClick, currentDate, onMonthChange }: CalendarProps) {
+export function Calendar({ availability, onDayClick, currentDate, onMonthChange, selectedDate }: CalendarProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -22,7 +23,7 @@ export function Calendar({ availability, onDayClick, currentDate, onMonthChange 
   }, [year, month]);
 
   const monthName = useMemo(() => {
-    return currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+    return currentDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }).toUpperCase();
   }, [currentDate]);
 
   const availabilityMap = useMemo(() => {
@@ -41,16 +42,21 @@ export function Calendar({ availability, onDayClick, currentDate, onMonthChange 
     onMonthChange(new Date(year, month + 1, 1));
   };
 
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const todayDate = isCurrentMonth
+    ? `${year}-${String(month + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    : '';
+
   const getStatusClass = (date: string): string => {
     const item = availabilityMap.get(date);
-    if (!item) return '';
+    if (!item) return 'status-unavailable';
     return `status-${item.status}`;
   };
 
-  const getStatusNote = (date: string): string | null => {
-    const item = availabilityMap.get(date);
-    return item?.note || null;
-  };
+  const isToday = (date: string): boolean => date === todayDate;
+
+  const isSelected = (date: string): boolean => date === selectedDate;
 
   const renderDays = (): JSX.Element[] => {
     const days: JSX.Element[] = [];
@@ -62,12 +68,13 @@ export function Calendar({ availability, onDayClick, currentDate, onMonthChange 
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const statusClass = getStatusClass(dateStr);
-      const note = getStatusNote(dateStr);
+      const todayClass = isToday(dateStr) ? ' today' : '';
+      const selectedClass = isSelected(dateStr) ? ' selected' : '';
 
       days.push(
         <div
           key={day}
-          className={`calendar-day ${statusClass}`}
+          className={`calendar-day ${statusClass}${todayClass}${selectedClass}`}
           onClick={() => onDayClick(dateStr)}
           role="button"
           tabIndex={0}
@@ -79,7 +86,6 @@ export function Calendar({ availability, onDayClick, currentDate, onMonthChange 
           }}
         >
           <span className="day-number">{day}</span>
-          {note && <span className="day-note">{note}</span>}
         </div>
       );
     }
@@ -99,27 +105,27 @@ export function Calendar({ availability, onDayClick, currentDate, onMonthChange 
         </button>
       </div>
       <div className="calendar-weekdays">
-        <div>Sun</div>
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
+        <div>Dim</div>
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mer</div>
+        <div>Jeu</div>
+        <div>Ven</div>
+        <div>Sam</div>
       </div>
       <div className="calendar-grid">{renderDays()}</div>
       <div className="calendar-legend">
         <div className="legend-item">
           <span className="legend-color available" />
-          <span>Available</span>
+          <span>Disponible</span>
         </div>
         <div className="legend-item">
           <span className="legend-color unavailable" />
-          <span>Unavailable</span>
+          <span>Indisponible</span>
         </div>
         <div className="legend-item">
           <span className="legend-color partial" />
-          <span>Partial</span>
+          <span>Partiel</span>
         </div>
       </div>
     </div>
