@@ -174,7 +174,7 @@ export function CalendarPage() {
   };
 
   const getStatusClass = (status: string | null): string => {
-    if (!status) return 'status-undefined';
+    if (!status) return 'status-unavailable';
     return `status-${status}`;
   };
 
