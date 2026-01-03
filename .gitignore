@@ -38,3 +38,5 @@ yarn-error.log*
 backend/node_modules/
 backend/coverage/
 
+# Docker
+docker-compose.yml
