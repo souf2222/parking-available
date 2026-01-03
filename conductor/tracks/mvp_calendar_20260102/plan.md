@@ -15,7 +15,7 @@
 - [x] Task: Implement API endpoint for login.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Backend API Development' (Protocol in workflow.md)
 
-## Phase 3: Frontend Development [checkpoint: 01db577]
+## Phase 3: Frontend Development [checkpoint: 750b3a6]
 - [x] Task: Initialize React project with TypeScript.
 - [x] Task: Create a calendar component to display the availability for the current month.
 - [x] Task: Implement a UI to allow the owner to update the status and notes for a specific day.
