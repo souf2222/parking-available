@@ -24,9 +24,9 @@
 - [x] Task: Write tests for the frontend components.
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Frontend Development' (Protocol in workflow.md)
 
-## Phase 4: Dockerization & Deployment
-- [~] Task: Create a `Dockerfile` for the backend application.
-- [ ] Task: Create a `Dockerfile` for the frontend application.
-- [ ] Task: Create a `docker-compose.yml` file to orchestrate the backend and frontend containers.
-- [ ] Task: Write documentation on how to deploy the application using Docker on an Unraid server.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Dockerization & Deployment' (Protocol in workflow.md)
+## Phase 4: Dockerization & Deployment [checkpoint: d164cba]
+- [x] Task: Create a `Dockerfile` for the backend application.
+- [x] Task: Create a `Dockerfile` for the frontend application.
+- [x] Task: Create a `docker-compose.yml` file to orchestrate the backend and frontend containers.
+- [x] Task: Write documentation on how to deploy the application using Docker on an Unraid server.
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Dockerization & Deployment' (Protocol in workflow.md)
