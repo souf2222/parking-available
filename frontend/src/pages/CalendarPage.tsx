@@ -186,7 +186,7 @@ export function CalendarPage() {
           {isAuthenticated ? (
             <>
               <span className="user-greeting">{user?.username.toUpperCase()}</span>
-              <button className="btn btn-secondary" onClick={handleLogout}>
+              <button className="btn btn-primary" onClick={handleLogout}>
                 Déconnexion
               </button>
             </>
@@ -218,7 +218,7 @@ export function CalendarPage() {
           <div className="day-details-header">
             <h3>{formatDate(selectedDay.date)}</h3>
             <button
-              className="close-details-btn"
+              className="close-details-btn btn-secondary"
               onClick={() => setSelectedDay(null)}
             >
               ×
@@ -240,10 +240,6 @@ export function CalendarPage() {
             <p className="modal-date">
               {formatDate(modalData.date)}
             </p>
-            <p style={{fontSize: '12px', color: '#666', margin: '4px 0'}}>
-              DEBUG: from={modalData.fromTime} to={modalData.toTime}
-            </p>
-
             <div className="status-buttons">
               <button
                 className={`status-btn available ${modalData.status === 'available' ? 'active' : ''}`}
@@ -284,7 +280,7 @@ export function CalendarPage() {
 
             <div className="modal-actions">
               <button
-                className="btn save-btn"
+                className="btn btn-primary"
                 onClick={handleSave}
               >
                 Enregistrer

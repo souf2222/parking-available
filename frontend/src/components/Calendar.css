@@ -40,6 +40,8 @@
 .calendar-nav-btn:hover {
   background: var(--color-accent);
   color: var(--color-bg);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
 
 .calendar-nav-btn:active {
@@ -119,13 +121,13 @@
   transform: translateX(-50%);
   width: 8px;
   height: 8px;
-  background: var(--color-bg);
+  background: currentColor;
   border-radius: 50%;
 }
 
 .calendar-day.selected {
-  outline: var(--border-width) dashed var(--color-accent);
-  outline-offset: 2px;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
 
 .calendar-day.status-available {
@@ -153,7 +155,7 @@
 .calendar-day.status-partial {
   background: var(--color-bg);
   color: var(--color-accent);
-  border-style: dashed;
+  /* border-style: dashed; */
   border-width: 3px;
 }
 
@@ -191,12 +193,11 @@
 }
 
 .legend-color.unavailable {
-  background: var(--color-text);
+  background: var(--color-accent);
 }
 
 .legend-color.partial {
   background: var(--color-bg);
-  border-style: dashed;
 }
 
 @media (max-width: 500px) {

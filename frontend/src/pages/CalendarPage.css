@@ -65,32 +65,30 @@
 
 .status-btn.available:hover,
 .status-btn.available.active {
-  background: var(--color-text);
-  color: var(--color-green);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
 
 .status-btn.partial {
   background: var(--color-bg);
   color: var(--color-accent);
-  border-style: dashed;
 }
 
 .status-btn.partial:hover,
 .status-btn.partial.active {
-  background: var(--color-accent);
-  color: var(--color-bg);
-  border-style: solid;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
 
 .status-btn.unavailable {
-  background: var(--color-text);
+  background: var(--color-accent);
   color: var(--color-bg);
 }
 
 .status-btn.unavailable:hover,
 .status-btn.unavailable.active {
-  background: var(--color-bg);
-  color: var(--color-text);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
 
 .time-selector {
@@ -153,16 +151,6 @@
   flex: 1;
   padding: var(--spacing-md);
   font-size: 14px;
-}
-
-.save-btn {
-  background: var(--color-accent);
-  color: var(--color-bg);
-}
-
-.save-btn:hover {
-  background: var(--color-text);
-  color: var(--color-accent);
 }
 
 .day-details-panel {
@@ -233,7 +221,7 @@
 }
 
 .day-details-status.status-unavailable {
-  background: var(--color-text);
+  background: var(--color-accent);
   color: var(--color-bg);
 }
 

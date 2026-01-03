@@ -70,30 +70,38 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--color-accent);
+  background-color: var(--color-text);
   color: var(--color-bg);
   border-color: var(--color-border);
-}
-
-.btn-primary:hover {
-  background-color: var(--color-text);
-  color: var(--color-accent);
 }
 
 .btn-primary:active {
   transform: translate(2px, 2px);
 }
 
+.btn-primary:hover {
+  color: var(--color-bg);
+  background: var(--color-accent);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
+}
+
 .btn-secondary {
   background-color: var(--color-bg);
   color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn-secondary:active {
+  transform: translate(2px, 2px);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-text);
   color: var(--color-bg);
+  background: var(--color-accent);
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-border);
 }
-
 .card {
   background: var(--color-bg);
   border: var(--border-width) solid var(--color-border);
@@ -182,7 +190,7 @@ body {
   }
 
   .header {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: var(--spacing-md);
     text-align: center;
   }
