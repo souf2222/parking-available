@@ -90,6 +90,11 @@
   transform: translate(-2px, -2px);
   box-shadow: 4px 4px 0 var(--color-border);
 }
+.status-btn.available.active::before,
+.status-btn.partial.active::before,
+.status-btn.unavailable.active::before {
+  content: '→ ';
+}
 
 .time-selector {
   display: flex;
@@ -228,7 +233,7 @@
 .day-details-status.status-partial {
   background: var(--color-bg);
   color: var(--color-accent);
-  border-style: dashed;
+  /* border-style: dashed; */
 }
 
 .day-details-status.status-undefined {
