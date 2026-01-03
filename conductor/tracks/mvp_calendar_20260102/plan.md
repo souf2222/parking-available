@@ -15,17 +15,17 @@
 - [x] Task: Implement API endpoint for login.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Backend API Development' (Protocol in workflow.md)
 
-## Phase 3: Frontend Development
-- [~] Task: Initialize React project with TypeScript.
-- [ ] Task: Create a calendar component to display the availability for the current month.
-- [ ] Task: Implement a UI to allow the owner to update the status and notes for a specific day.
-- [ ] Task: Implement a login form to authenticate the user.
-- [ ] Task: Connect the frontend components to the backend API to fetch and update data.
-- [ ] Task: Write tests for the frontend components.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Frontend Development' (Protocol in workflow.md)
+## Phase 3: Frontend Development [checkpoint: 01db577]
+- [x] Task: Initialize React project with TypeScript.
+- [x] Task: Create a calendar component to display the availability for the current month.
+- [x] Task: Implement a UI to allow the owner to update the status and notes for a specific day.
+- [x] Task: Implement a login form to authenticate the user.
+- [x] Task: Connect the frontend components to the backend API to fetch and update data.
+- [x] Task: Write tests for the frontend components.
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Frontend Development' (Protocol in workflow.md)
 
 ## Phase 4: Dockerization & Deployment
-- [ ] Task: Create a `Dockerfile` for the backend application.
+- [~] Task: Create a `Dockerfile` for the backend application.
 - [ ] Task: Create a `Dockerfile` for the frontend application.
 - [ ] Task: Create a `docker-compose.yml` file to orchestrate the backend and frontend containers.
 - [ ] Task: Write documentation on how to deploy the application using Docker on an Unraid server.
