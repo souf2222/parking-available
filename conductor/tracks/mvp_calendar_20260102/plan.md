@@ -8,15 +8,15 @@
 - [x] Task: Implement a simple password-based authentication middleware.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Project Setup & Backend Foundation' (Protocol in workflow.md)
 
-## Phase 2: Backend API Development
-- [ ] Task: Write tests for the availability API endpoints (CRUD operations).
-- [ ] Task: Implement API endpoints to create, read, update, and delete availability status for specific dates.
-- [ ] Task: Implement API endpoint to get availability data for a given month.
-- [ ] Task: Implement API endpoint for login.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Backend API Development' (Protocol in workflow.md)
+## Phase 2: Backend API Development [checkpoint: e886b96]
+- [x] Task: Write tests for the availability API endpoints (CRUD operations).
+- [x] Task: Implement API endpoints to create, read, update, and delete availability status for specific dates.
+- [x] Task: Implement API endpoint to get availability data for a given month.
+- [x] Task: Implement API endpoint for login.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Backend API Development' (Protocol in workflow.md)
 
 ## Phase 3: Frontend Development
-- [ ] Task: Initialize React project with TypeScript.
+- [~] Task: Initialize React project with TypeScript.
 - [ ] Task: Create a calendar component to display the availability for the current month.
 - [ ] Task: Implement a UI to allow the owner to update the status and notes for a specific day.
 - [ ] Task: Implement a login form to authenticate the user.
