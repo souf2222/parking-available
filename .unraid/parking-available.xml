@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>parking-available</title>
+</head>
+<body>
+<xml>
+  <name>Parking Available</name>
+  <description>A parking availability calendar application. Owners can mark parking availability, neighbors can view it. French interface with brutalist design.</description>
+  <developer>souf2222</developer>
+  <repository>https://github.com/souf2222/parking-available</repository>
+  <icon>https://raw.githubusercontent.com/souf2222/parking-available/main/.unraid/icon.svg</icon>
+  <support>https://github.com/souf2222/parking-available/issues</support>
+  <registry>https://index.docker.io/v1/</registry>
+  <network>bridge</network>
+  <privileged>false</privileged>
+  <branches>
+    <branch>
+      <name>stable</name>
+      <repository>souf2222/parking-available</repository>
+      <tag>latest</tag>
+      <supported architectures>
+        <architecture>x86-64</architecture>
+        <architecture>arm64</architecture>
+      </supported architectures>
+      <context>/.unraid</context>
+      <dockerfile path=".unraid/Dockerfile"/>
+    </branch>
+  </branches>
+  <overview lang="en">
+Parking Available - Parking Availability Calendar
+
+A calendar application for managing parking spot availability in your neighborhood.
+
+FEATURES:
+• Visual calendar showing availability status
+• Three status types: Available (green), Partial (orange dashed), Unavailable (black)
+• Public access - anyone can view the calendar
+• Owner mode - authenticated users can set availability
+• French interface with bold brutalist design
+• SQLite database - no external database required
+
+DEFAULT USERS (created on first run):
+• admin / admin123 (owner)
+• jade / jade123 (owner)
+• bob / bob123 (neighbor)
+
+PORTS:
+• Frontend: 80 (HTTP) - Main application
+• Backend: 8080 (API) - API endpoint
+
+VOLUMES:
+• /mnt/user/appdata/parking-available: Database and app data
+
+ACCESS:
+• Web UI: http://[IP]:[PORT:80]
+• API: http://[IP]:[PORT:8080]
+  </overview>
+  <webui lang="en">http://[IP]:[PORT:80]</webui>
+  <portal lang="en">http://[IP]:[PORT:80]</portal>
+  <params>
+    <param name="Host Port" default="8080" description="Application HTTP port" required="true">8080</param>
+    <param name="Volume Path" default="/mnt/user/appdata/parking-available" description="Application data directory for SQLite database">/mnt/user/appdata/parking-available</param>
+    <param name="Timezone" default="Europe/Paris" description="Container timezone">Europe/Paris</param>
+    <param name="JWT Secret" default="change-this-secret-key" description="JWT secret key for authentication (change in production)">change-this-secret-key</param>
+  </params>
+  <volume>
+    <host>/mnt/user/appdata/parking-available</host>
+    <container>/app/data</container>
+    <mode>rw</mode>
+  </volume>
+  <port>
+    <host>8080</host>
+    <container>80</container>
+    <protocol>tcp</protocol>
+  </port>
+  <environment>
+    <param name="TZ" default="Europe/Paris" description="Timezone">Europe/Paris</param>
+    <param name="PORT" default="8080" description="Application port">8080</param>
+    <param name="JWT_SECRET" default="change-this-secret-key" description="JWT secret key">change-this-secret-key</param>
+  </environment>
+  <post_arguments><![CDATA[--network host]]></post_arguments>
+  <labels>
+    <label name="com.docker.compose.project" value="parking-available"/>
+  </labels>
+</xml>
+</body>
+</html>
