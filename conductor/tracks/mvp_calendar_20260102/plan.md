@@ -8,7 +8,7 @@
 - [x] Task: Implement a simple password-based authentication middleware.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Project Setup & Backend Foundation' (Protocol in workflow.md)
 
-## Phase 2: Backend API Development [checkpoint: e886b96]
+## Phase 2: Backend API Development [checkpoint: 4034504]
 - [x] Task: Write tests for the availability API endpoints (CRUD operations).
 - [x] Task: Implement API endpoints to create, read, update, and delete availability status for specific dates.
 - [x] Task: Implement API endpoint to get availability data for a given month.
