@@ -1,8 +1,8 @@
 # Plan for: Build the core functionality for the parking availability calendar with basic status updates and a simple authentication mechanism.
 
 ## Phase 1: Project Setup & Backend Foundation
-- [ ] Task: Initialize Node.js project with TypeScript.
-- [ ] Task: Set up Express server with basic routing.
+- [x] Task: Initialize Node.js project with TypeScript.
+- [~] Task: Set up Express server with basic routing.
 - [ ] Task: Integrate SQLite database using a library like `sqlite3`.
 - [ ] Task: Create database schema for availability data.
 - [ ] Task: Implement a simple password-based authentication middleware.
